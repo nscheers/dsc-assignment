@@ -15,8 +15,6 @@ public class MyApplicationConfiguration {
     public WebClient myWebClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder
                 .baseUrl("https://reliable-airline.com")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("key", "Iw8zeveVyaPNWonPNaU0213uw3g6Ei"))
                 .build();
     }
 }

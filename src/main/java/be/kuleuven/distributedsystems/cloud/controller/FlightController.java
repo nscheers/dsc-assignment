@@ -1,6 +1,7 @@
 package be.kuleuven.distributedsystems.cloud.controller;
 
 import be.kuleuven.distributedsystems.cloud.WebService;
+import be.kuleuven.distributedsystems.cloud.entities.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,12 @@ public class FlightController {
 
     @GetMapping("getFlights")
     public void getFlights(){
-        System.out.println(webService.getFlights());
+        System.out.println(webService.getFlights().toString());
 
+    }
+
+    @GetMapping("getFlight")
+    public Flight getFlights(String name, String flightId){
+        return webService.getFlight(name, flightId);
     }
 }
