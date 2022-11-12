@@ -75,11 +75,13 @@ public class WebServiceImpl implements WebService{
         return times.toArray(new String[times.size()]);
     }
 
-    public Seat[] getAvailableSeats(String name, String flightId, Time time) {
+    public Seat[] getAvailableSeats(String name, String flightId, String time) {
         var seats = myWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flights/"  + flightId + "/seats" )
+                        .path("/flights/"  + flightId + "/seats")
+                        .queryParam("time", time)
+                        .queryParam("available", true)
                         .queryParam("key", key)
                         .build())
                 .retrieve()

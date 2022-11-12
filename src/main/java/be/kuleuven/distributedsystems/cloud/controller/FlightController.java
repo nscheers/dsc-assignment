@@ -39,7 +39,7 @@ public class FlightController {
     }
 
     @GetMapping("getAvailableSeats")
-    public Seat[] getAvailableSeats(String name, String flightId, Time time){
+    public Seat[] getAvailableSeats(String name, String flightId, String time){
         return webService.getAvailableSeats(name, flightId, time);
     }
 

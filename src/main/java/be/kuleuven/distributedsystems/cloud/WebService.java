@@ -14,7 +14,7 @@ public interface WebService {
 
     public String[] getFlightTimes(String name, String flightId);
 
-    public Seat[] getAvailableSeats(String name, String flightId, Time time);
+    public Seat[] getAvailableSeats(String name, String flightId, String time);
 
     public Seat getSeat(String name, String flightId, String seatId);
 }
