@@ -12,7 +12,7 @@ public interface WebService {
     public Flight[] getFlights();
     public Flight getFlight(String name, String flightId);
 
-    public Time[] getFlightTimes(String name, String flightId);
+    public String[] getFlightTimes(String name, String flightId);
 
     public Seat[] getAvailableSeats(String name, String flightId, Time time);
 

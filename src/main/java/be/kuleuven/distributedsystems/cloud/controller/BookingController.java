@@ -24,8 +24,7 @@ public class BookingController {
 
     private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
-    @GetMapping("getBookings")
-    public Flight[] getBookings(){
+    @GetMapping("getBookings")    public Flight[] getBookings(){
         return null;
     }
 

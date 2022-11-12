@@ -57,22 +57,24 @@ public class WebServiceImpl implements WebService{
         return response.block();
     }
 
-    @Override
-    public Time[] getFlightTimes(String name, String flightId) {
+    public String[] getFlightTimes(String name, String flightId) {
         var times = myWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flights/"  + flightId + "/seats" )
+                        .path("/flights/"  + flightId + "/times" )
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<CollectionModel<Time>>() {}).log()
+                .bodyToMono(new ParameterizedTypeReference<CollectionModel<String>>() {}).log()
                 .block()
                 .getContent();
-        return times.toArray(new Time[times.size()]);
+
+        for (String time: times) {
+            System.out.println(time);
+        };
+        return times.toArray(new String[times.size()]);
     }
 
-    @Override
     public Seat[] getAvailableSeats(String name, String flightId, Time time) {
         var seats = myWebClient
                 .get()
@@ -87,7 +89,6 @@ public class WebServiceImpl implements WebService{
         return seats.toArray(new Seat[seats.size()]);
     }
 
-    @Override
     public Seat getSeat(String name, String flightId, String seatId) {
         return myWebClient
                 .get()

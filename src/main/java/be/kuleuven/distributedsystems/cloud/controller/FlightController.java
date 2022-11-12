@@ -33,17 +33,17 @@ public class FlightController {
         return webService.getFlight(name, flightId);
     }
 
-    @GetMapping("get")
-    public Time[] getFlightTimes(String name, String flightId){
+    @GetMapping("getFlightTimes")
+    public String[] getFlightTimes(String name, String flightId){
         return webService.getFlightTimes(name, flightId);
     }
 
-    @GetMapping("getFlights")
+    @GetMapping("getAvailableSeats")
     public Seat[] getAvailableSeats(String name, String flightId, Time time){
         return webService.getAvailableSeats(name, flightId, time);
     }
 
-    @GetMapping("getFlights")
+    @GetMapping("getSeat")
     public Seat getSeat(String name, String flightId, String seatId){
         return webService.getSeat(name, flightId, seatId);
     }
