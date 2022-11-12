@@ -22,9 +22,8 @@ public class FlightController {
     private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
     @GetMapping("getFlights")
-    public void getFlights(){
-        System.out.println(webService.getFlights().toString());
-
+    public Flight[] getFlights(){
+        return webService.getFlights();
     }
 
     @GetMapping("getFlight")

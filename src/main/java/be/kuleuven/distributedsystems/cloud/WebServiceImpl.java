@@ -2,14 +2,18 @@ package be.kuleuven.distributedsystems.cloud;
 
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 
+import be.kuleuven.distributedsystems.cloud.entities.Seat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,17 +28,19 @@ public class WebServiceImpl implements WebService{
     private final static String key = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
 
-    public List<Flight> getFlights() {
-        Mono<List<Flight>> response = myWebClient
+    public Flight[] getFlights() {
+        var flights =  myWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights")
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Flight>>() {}).log();
-        return response.block();
+                .bodyToMono(new ParameterizedTypeReference<CollectionModel<Flight>>() {}).log()
+                .block()
+                .getContent();
 
+        return flights.toArray(new Flight[flights.size()]);
     }
 
 
@@ -48,5 +54,17 @@ public class WebServiceImpl implements WebService{
                 .retrieve()
                 .bodyToMono(Flight.class).log();
         return response.block();
+    }
+
+    public List<Seat> getAvailableSeats(String airline, String flightId, String time){
+        Flight flight = myWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/flights/"  + airline + "/" + flightId + "/" + time)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve()
+                .bodyToMono(Flight.class).log().block();
+        return null;
     }
 }
