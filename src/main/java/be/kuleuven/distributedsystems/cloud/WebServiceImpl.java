@@ -89,6 +89,13 @@ public class WebServiceImpl implements WebService{
 
     @Override
     public Seat getSeat(String name, String flightId, String seatId) {
-        return null;
+        return myWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/flights/"  + flightId + "/seats/" + seatId)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve()
+                .bodyToMono(Seat.class).log().block();
     }
 }
