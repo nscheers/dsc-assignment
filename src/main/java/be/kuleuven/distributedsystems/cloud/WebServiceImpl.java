@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,15 +57,38 @@ public class WebServiceImpl implements WebService{
         return response.block();
     }
 
-    public List<Seat> getAvailableSeats(String airline, String flightId, String time){
-        Flight flight = myWebClient
+    @Override
+    public Time[] getFlightTimes(String name, String flightId) {
+        var times = myWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flights/"  + airline + "/" + flightId + "/" + time)
+                        .path("/flights/"  + flightId + "/seats" )
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(Flight.class).log().block();
+                .bodyToMono(new ParameterizedTypeReference<CollectionModel<Time>>() {}).log()
+                .block()
+                .getContent();
+        return times.toArray(new Time[times.size()]);
+    }
+
+    @Override
+    public Seat[] getAvailableSeats(String name, String flightId, Time time) {
+        var seats = myWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/flights/"  + flightId + "/seats" )
+                        .queryParam("key", key)
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<CollectionModel<Seat>>() {}).log()
+                .block()
+                .getContent();
+        return seats.toArray(new Seat[seats.size()]);
+    }
+
+    @Override
+    public Seat getSeat(String name, String flightId, String seatId) {
         return null;
     }
 }
