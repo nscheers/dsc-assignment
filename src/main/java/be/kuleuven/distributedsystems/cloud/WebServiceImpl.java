@@ -9,46 +9,61 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Array;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class WebServiceImpl implements WebService{
 
     @Autowired
-    private WebClient myWebClient;
+    private WebClient.Builder webClientBuilder;
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private final static String key = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
+    List<WebClient> airlines;
+
+    public WebServiceImpl(WebClient.Builder webClientBuilder){
+        this.webClientBuilder = webClientBuilder;
+        airlines = new ArrayList<WebClient>();
+        airlines.add(this.webClientBuilder.baseUrl("https://reliable-airline.com").build());
+        airlines.add(this.webClientBuilder.baseUrl("https://unreliable-airline.com").build());
+
+    }
+
 
     public Flight[] getFlights() {
-        var flights =  myWebClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/flights")
-                        .queryParam("key", key)
-                        .build())
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<CollectionModel<Flight>>() {}).log()
-                .block()
-                .getContent();
+        Flight[] allFlights = new Flight[0];
 
-        return flights.toArray(new Flight[flights.size()]);
+        Iterator itr = airlines.iterator();
+        while (itr.hasNext())
+        {
+            WebClient x = (WebClient)itr.next();
+            var result =  x
+                    .get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/flights")
+                            .queryParam("key", key)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<CollectionModel<Flight>>() {}).log()
+                    .block()
+                    .getContent();
+            Flight[] flights = result.toArray(new Flight[result.size()]);
+            Flight[] both = Arrays.copyOf(allFlights, allFlights.length + flights.length);
+            System.arraycopy(flights, 0, both, allFlights.length, flights.length);
+            allFlights = both;
+        }
+
+        return allFlights;
     }
 
 
     public Flight getFlight(String name, String flightId) {
-        Mono<Flight> response = myWebClient
+        Mono<Flight> response = webClientBuilder.baseUrl("https://" + name).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId)
@@ -60,7 +75,7 @@ public class WebServiceImpl implements WebService{
     }
 
     public String[] getFlightTimes(String name, String flightId) {
-        var times = myWebClient
+        var times = webClientBuilder.baseUrl("https://" + name).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/times" )
@@ -78,7 +93,7 @@ public class WebServiceImpl implements WebService{
     }
 
     public Seat[] getAvailableSeats(String name, String flightId, String time) {
-        var seats = myWebClient
+        var seats = webClientBuilder.baseUrl("https://" + name).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/seats")
@@ -94,7 +109,7 @@ public class WebServiceImpl implements WebService{
     }
 
     public Seat getSeat(String name, String flightId, String seatId) {
-        return myWebClient
+        return webClientBuilder.baseUrl("https://" + name).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/seats/" + seatId)
