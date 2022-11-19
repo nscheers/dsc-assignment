@@ -13,3 +13,8 @@ https://firebase.google.com/docs/cli#install-cli-windows
 
 run firebase:
 firebase emulators:start --project demo-distributed-systems-kul
+
+Kill process 8081:
+netstat -ano | findstr :<PORT>
+taskkill /PID <PID> /F
+
