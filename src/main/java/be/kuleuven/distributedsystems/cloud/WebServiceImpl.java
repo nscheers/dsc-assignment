@@ -1,5 +1,6 @@
 package be.kuleuven.distributedsystems.cloud;
 
+import be.kuleuven.distributedsystems.cloud.controller.BookingController;
 import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 
@@ -117,25 +118,5 @@ public class WebServiceImpl implements WebService{
                         .build())
                 .retrieve()
                 .bodyToMono(Seat.class).log().block();
-    }
-
-    @Override
-    public Booking[] getBookings() {
-        return new Booking[0];
-    }
-
-    @Override
-    public Booking[] getAllBookings() {
-        return new Booking[0];
-    }
-
-    @Override
-    public User[] getBestCustomers() {
-        return new User[0];
-    }
-
-    @Override
-    public void confirmQuotes() {
-
     }
 }

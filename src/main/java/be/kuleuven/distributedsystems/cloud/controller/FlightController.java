@@ -1,6 +1,7 @@
 package be.kuleuven.distributedsystems.cloud.controller;
 
 import be.kuleuven.distributedsystems.cloud.WebService;
+import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 import be.kuleuven.distributedsystems.cloud.entities.Seat;
 import org.springframework.beans.factory.annotation.Autowired;

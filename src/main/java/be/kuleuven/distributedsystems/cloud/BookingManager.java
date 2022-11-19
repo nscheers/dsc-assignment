@@ -4,6 +4,7 @@ import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.User;
 
 import java.awt.print.Book;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookingManager {
@@ -11,9 +12,9 @@ public class BookingManager {
     List<Booking> bookings;
 
 
-    public BookingManager(List<User> customers, List<Booking> bookings) {
-        this.customers = customers;
-        this.bookings = bookings;
+    public BookingManager() {
+        this.customers = new ArrayList<User>();
+        this.bookings = new ArrayList<Booking>();
     }
 
     public List<User> getCustomers() {
