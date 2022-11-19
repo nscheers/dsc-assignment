@@ -5,12 +5,15 @@ import be.kuleuven.distributedsystems.cloud.WebService;
 import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 import be.kuleuven.distributedsystems.cloud.entities.Ticket;
+import com.google.cloud.firestore.Firestore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,17 +28,23 @@ public class BookingController {
 
     private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
+    @Resource(name= "db")
+    private Firestore db;
+
+
     @GetMapping("getBookings")
     public Booking[] getBookings(String jwt){
         return (Booking[]) bookingManager.getBookings().stream().filter(booking -> booking.getCustomer().equals(jwt)).toArray();
     }
 
     @GetMapping("getAllBookings")
+    @PreAuthorize("hasAuthority('MANAGER')")
     public Booking[] getAllBookings(){
         return (Booking[]) bookingManager.getBookings().toArray(new Booking[0]);
     }
 
     @GetMapping("getBestCustomers")
+    @PreAuthorize("hasAuthority('MANAGER')")
     public Flight[] getBestCustomers(){
         //Dit moet later maar gebeuren met firestore man
 

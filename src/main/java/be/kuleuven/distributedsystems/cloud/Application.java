@@ -1,26 +1,21 @@
 package be.kuleuven.distributedsystems.cloud;
 
-import be.kuleuven.distributedsystems.cloud.entities.Flight;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.HypermediaWebClientConfigurer;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
@@ -64,6 +59,14 @@ public class Application {
         return firewall;
     }
 
+    @Bean
+    public Firestore db(){
+        return FirestoreOptions.getDefaultInstance()
+                .toBuilder()
+                .setProjectId(this.projectId())
+                .build()
+                .getService();
+    }
 }
 
 

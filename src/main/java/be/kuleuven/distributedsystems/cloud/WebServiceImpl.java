@@ -1,11 +1,8 @@
 package be.kuleuven.distributedsystems.cloud;
 
-import be.kuleuven.distributedsystems.cloud.controller.BookingController;
-import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 
 import be.kuleuven.distributedsystems.cloud.entities.Seat;
-import be.kuleuven.distributedsystems.cloud.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
