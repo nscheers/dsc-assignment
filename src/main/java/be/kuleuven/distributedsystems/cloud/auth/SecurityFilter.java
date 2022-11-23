@@ -40,7 +40,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         var user = new User("test@example.com", "");
 
-
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(new FirebaseAuthentication(user));
 
