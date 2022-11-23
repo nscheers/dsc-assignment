@@ -84,9 +84,6 @@ public class WebServiceImpl implements WebService{
                 .block()
                 .getContent();
 
-        for (String time: times) {
-            System.out.println(time);
-        };
         return times.toArray(new String[times.size()]);
     }
 

@@ -36,13 +36,13 @@ public class BookingController {
     }
 
     @GetMapping("getAllBookings")
-    @PreAuthorize("hasAuthority('MANAGER')")
+    @PreAuthorize("hasAuthority('manager')")
     public Booking[] getAllBookings(){
         return (Booking[]) bookingManager.getBookings().toArray(new Booking[0]);
     }
 
     @GetMapping("getBestCustomers")
-    @PreAuthorize("hasAuthority('MANAGER')")
+    @PreAuthorize("hasAuthority('manager')")
     public Flight[] getBestCustomers(){
         //Dit moet later maar gebeuren met firestore man
 

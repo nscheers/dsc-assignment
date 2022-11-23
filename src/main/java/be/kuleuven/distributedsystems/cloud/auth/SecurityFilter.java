@@ -36,9 +36,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         DecodedJWT jwt =  JWT.decode(chunks[1]);
 
         var role = jwt.getClaim("role");
-        System.out.println(role.toString());
 
-        var user = new User("test@example.com", "");
+        var user = new User("test@example.com", role.toString());
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(new FirebaseAuthentication(user));
