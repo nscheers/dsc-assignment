@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @Service
 public class WebServiceImpl implements WebService{
 
@@ -39,6 +41,7 @@ public class WebServiceImpl implements WebService{
         Iterator itr = airlines.iterator();
         while (itr.hasNext())
         {
+
             WebClient x = (WebClient)itr.next();
             var result =  x
                     .get()
@@ -60,8 +63,8 @@ public class WebServiceImpl implements WebService{
     }
 
 
-    public Flight getFlight(String name, String flightId) {
-        Mono<Flight> response = webClientBuilder.baseUrl("https://" + name).build()
+    public Flight getFlight(String airline, String flightId) {
+        Mono<Flight> response = webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId)
@@ -72,8 +75,8 @@ public class WebServiceImpl implements WebService{
         return response.block();
     }
 
-    public String[] getFlightTimes(String name, String flightId) {
-        var times = webClientBuilder.baseUrl("https://" + name).build()
+    public String[] getFlightTimes(String airline, String flightId) {
+        var times = webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/times" )
@@ -84,14 +87,11 @@ public class WebServiceImpl implements WebService{
                 .block()
                 .getContent();
 
-        for (String time: times) {
-            System.out.println(time);
-        };
-        return times.toArray(new String[times.size()]);
+        return Arrays.stream(times.toArray(new String[0])).sorted().toArray(String[]::new);
     }
 
-    public Seat[] getAvailableSeats(String name, String flightId, String time) {
-        var seats = webClientBuilder.baseUrl("https://" + name).build()
+    public Map<String, List<Seat>> getAvailableSeats(String airline, String flightId, String time) {
+        var seats = webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/seats")
@@ -103,11 +103,15 @@ public class WebServiceImpl implements WebService{
                 .bodyToMono(new ParameterizedTypeReference<CollectionModel<Seat>>() {}).log()
                 .block()
                 .getContent();
-        return seats.toArray(new Seat[seats.size()]);
+        Seat[] zitjes = seats.toArray(new Seat[seats.size()]);
+        // String[] types = Arrays.stream(zitjes).map(Seat::getType).distinct().toArray(String[]::new);
+
+        return Arrays.stream(zitjes).sorted(Comparator.comparing(Seat::getName)).collect(groupingBy(Seat::getType));
+
     }
 
-    public Seat getSeat(String name, String flightId, String seatId) {
-        return webClientBuilder.baseUrl("https://" + name).build()
+    public Seat getSeat(String airline, String flightId, String seatId) {
+        return webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/flights/"  + flightId + "/seats/" + seatId)

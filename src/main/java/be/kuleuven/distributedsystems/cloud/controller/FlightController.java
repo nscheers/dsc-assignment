@@ -13,7 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Time;
 import java.util.Collections;
-
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -40,12 +41,13 @@ public class FlightController {
     }
 
     @GetMapping("getAvailableSeats")
-    public Seat[] getAvailableSeats(String airline, String flightId, String time){
+    public Map<String, List<Seat>> getAvailableSeats(String airline, String flightId, String time){
         return webService.getAvailableSeats(airline, flightId, time);
     }
 
     @GetMapping("getSeat")
     public Seat getSeat(String airline, String flightId, String seatId){
+        Seat zitje = webService.getSeat(airline, flightId, seatId);
         return webService.getSeat(airline, flightId, seatId);
     }
 }
