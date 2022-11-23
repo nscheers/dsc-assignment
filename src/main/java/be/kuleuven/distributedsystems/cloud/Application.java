@@ -59,14 +59,6 @@ public class Application {
         return firewall;
     }
 
-    @Bean
-    public Firestore db(){
-        return FirestoreOptions.getDefaultInstance()
-                .toBuilder()
-                .setProjectId(this.projectId())
-                .build()
-                .getService();
-    }
 }
 
 

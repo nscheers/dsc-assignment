@@ -28,8 +28,6 @@ public class BookingController {
 
     private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
-    @Resource(name= "db")
-    private Firestore db;
 
 
     @GetMapping("getBookings")
