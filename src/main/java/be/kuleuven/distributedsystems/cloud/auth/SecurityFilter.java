@@ -2,6 +2,7 @@ package be.kuleuven.distributedsystems.cloud.auth;
 
 import be.kuleuven.distributedsystems.cloud.entities.User;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.net.HttpHeaders;
@@ -30,9 +31,14 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // TODO: (level 1) decode Identity Token and assign correct email and role
         // TODO: (level 2) verify Identity Token
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String[] chunks = authorization.split(" ");
+        DecodedJWT jwt =  JWT.decode(chunks[1]);
+
+        var role = jwt.getClaim("role");
+        System.out.println(role.toString());
 
         var user = new User("test@example.com", "");
-
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(new FirebaseAuthentication(user));
