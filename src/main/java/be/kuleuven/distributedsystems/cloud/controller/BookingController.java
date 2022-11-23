@@ -2,16 +2,12 @@ package be.kuleuven.distributedsystems.cloud.controller;
 
 import be.kuleuven.distributedsystems.cloud.BookingManager;
 import be.kuleuven.distributedsystems.cloud.WebService;
-import be.kuleuven.distributedsystems.cloud.entities.Booking;
-import be.kuleuven.distributedsystems.cloud.entities.Flight;
-import be.kuleuven.distributedsystems.cloud.entities.Ticket;
+import be.kuleuven.distributedsystems.cloud.WebServiceImpl;
+import be.kuleuven.distributedsystems.cloud.entities.*;
 import com.google.cloud.firestore.Firestore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,28 +34,36 @@ public class BookingController {
     }
 */
     @GetMapping("getBookings")
-    public Booking[] getBookings(String jwt){
-        return (Booking[]) bookingManager.getBookings().stream().filter(booking -> booking.getCustomer().equals(jwt)).toArray();
+    public Booking[] getBookings(){
+        //Todo: Firestore logica
+        List<Booking> bookings = bookingManager.getBookings().stream().filter(booking -> booking.getCustomer().equals("test")).toList();
+        return bookings.toArray(Booking[]::new);
     }
 
     @GetMapping("getAllBookings")
     @PreAuthorize("hasAuthority('manager')")
     public Booking[] getAllBookings(){
+        //Todo: Firestore logica
         return (Booking[]) bookingManager.getBookings().toArray(new Booking[0]);
     }
 
     @GetMapping("getBestCustomers")
     @PreAuthorize("hasAuthority('manager')")
     public Flight[] getBestCustomers(){
-        //Dit moet later maar gebeuren met firestore man
+        //Todo: Firestore logica
 
         bookingManager.getBookings().stream();
         return null;
     }
 
     @PostMapping("confirmQuotes")
-    public void confirmQuotes(List<Ticket> tickets, String jwt){
-        Booking booking = new Booking(UUID.randomUUID(), LocalDateTime.now(), tickets, jwt);
-        bookingManager.addBooking(booking);
+    public void confirmQuotes(@RequestBody Quote[] quotes){
+        //ToDo: Get user from request
+        //Todo: Firestore logica
+
+        String bookingReference = bookingManager.createBooking(quotes).getId().toString();
+        for (Quote quote: quotes) {
+            webService.putSeat(quote.getAirline(), quote.getFlightId().toString(), quote.getSeatId().toString(), "test", bookingReference);
+        }
     }
 }

@@ -3,6 +3,7 @@ package be.kuleuven.distributedsystems.cloud;
 import be.kuleuven.distributedsystems.cloud.entities.Flight;
 
 import be.kuleuven.distributedsystems.cloud.entities.Seat;
+import be.kuleuven.distributedsystems.cloud.entities.Ticket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -114,10 +115,22 @@ public class WebServiceImpl implements WebService{
         return webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flights/"  + flightId + "/seats/" + seatId)
+                        .path("/flights/"  + flightId + "/seats/" + seatId + "/ticket")
                         .queryParam("key", key)
                         .build())
                 .retrieve()
                 .bodyToMono(Seat.class).log().block();
+    }
+
+    public Mono<Ticket> putSeat(String airline , String flightId, String seatId, String user, String bookingReference){
+        return webClientBuilder.baseUrl("https://" + airline).build()
+                .put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/flights/"  + flightId + "/seats/" + seatId + "/ticket")
+                        .queryParam("customer", user)
+                        .queryParam("bookingReference", bookingReference)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve().bodyToMono(Ticket.class);
     }
 }

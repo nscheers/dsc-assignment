@@ -53,7 +53,7 @@ public class Application {
 
      */
     /*
-    @Beanx
+    @Bean
     public Firestore db(){
         return FirestoreOptions.getDefaultInstance()
                 .toBuilder()

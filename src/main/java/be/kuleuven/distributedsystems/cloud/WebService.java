@@ -1,9 +1,7 @@
 package be.kuleuven.distributedsystems.cloud;
 
-import be.kuleuven.distributedsystems.cloud.entities.Booking;
-import be.kuleuven.distributedsystems.cloud.entities.Flight;
-import be.kuleuven.distributedsystems.cloud.entities.Seat;
-import be.kuleuven.distributedsystems.cloud.entities.User;
+import be.kuleuven.distributedsystems.cloud.entities.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +16,5 @@ public interface WebService {
 
     public Seat getSeat(String airline, String flightId, String seatId);
 
+    public Mono<Ticket> putSeat(String airline , String flightId, String seatId, String user, String bookingReference);
 }
