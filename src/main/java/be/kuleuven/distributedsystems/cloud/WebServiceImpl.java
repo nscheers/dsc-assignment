@@ -52,6 +52,7 @@ public class WebServiceImpl implements WebService{
                             .build())
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<CollectionModel<Flight>>() {}).log()
+                    .retry(3)
                     .block()
                     .getContent();
             Flight[] flights = result.toArray(new Flight[result.size()]);
@@ -72,7 +73,7 @@ public class WebServiceImpl implements WebService{
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(Flight.class).log();
+                .bodyToMono(Flight.class).log().retry(3);;
         return response.block();
     }
 
@@ -85,6 +86,7 @@ public class WebServiceImpl implements WebService{
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<CollectionModel<String>>() {}).log()
+                .retry(3)
                 .block()
                 .getContent();
 
@@ -102,6 +104,7 @@ public class WebServiceImpl implements WebService{
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<CollectionModel<Seat>>() {}).log()
+                .retry(3)
                 .block()
                 .getContent();
         Seat[] zitjes = seats.toArray(new Seat[seats.size()]);
@@ -119,7 +122,7 @@ public class WebServiceImpl implements WebService{
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(Seat.class).log().block();
+                .bodyToMono(Seat.class).log().retry(3).block();
     }
 
     public Mono<Ticket> putSeat(String airline , String flightId, String seatId, String user, String bookingReference){
@@ -131,6 +134,6 @@ public class WebServiceImpl implements WebService{
                         .queryParam("bookingReference", bookingReference)
                         .queryParam("key", key)
                         .build())
-                .retrieve().bodyToMono(Ticket.class);
+                .retrieve().bodyToMono(Ticket.class).retry(3);
     }
 }
