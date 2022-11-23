@@ -1,7 +1,14 @@
 package be.kuleuven.distributedsystems.cloud;
 
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
+import com.google.cloud.pubsub.v1.Publisher;
+import io.grpc.ManagedChannelBuilder;
+import org.apache.http.client.CredentialsProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -31,8 +38,32 @@ public class Application {
         // TODO: (level 2) load this data into Firestore
         String data = new String(new ClassPathResource("data.json").getInputStream().readAllBytes());
     }
-
+    /*
     @Bean
+    public Publisher publisher() throws IOException{
+        TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(
+                GrpcTransportChannel.create(
+                        ManagedChannelBuilder.forTarget("localhost:8083").usePlaintext().build()));
+        CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+        return Publisher.newBuilder()
+                .setChannelProvider(channelProvider)
+                .setChannelProvider(credentialsProvider)
+                .build();
+    }
+
+     */
+    /*
+    @Beanx
+    public Firestore db(){
+        return FirestoreOptions.getDefaultInstance()
+                .toBuilder()
+                .setProjectId(this.projectId())
+                .build()
+                .getService();
+    }
+    */
+    @Bean
+
     public boolean isProduction() {
         return Objects.equals(System.getenv("GAE_ENV"), "standard");
     }
