@@ -63,22 +63,7 @@ public class Application {
 
 
 
-    @Bean
-    public static Firestore getFirestore(){
-        return FirestoreOptions.newBuilder()
-                .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
-                        .setEndpoint("localhost:8084")
-                        .setChannelConfigurator(
-                                new ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder>() {
-                                    @Override
-                                    public ManagedChannelBuilder apply(ManagedChannelBuilder input) {
-                                        return input.usePlaintext();
-                                    }
-                                })
-                        .build())
-                .setCredentials(new FirestoreOptions.EmulatorCredentials())
-                .build().getService();
-    }
+
 
     @Bean
     public boolean isProduction() {

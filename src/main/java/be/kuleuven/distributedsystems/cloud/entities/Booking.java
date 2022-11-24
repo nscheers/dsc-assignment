@@ -1,5 +1,9 @@
 package be.kuleuven.distributedsystems.cloud.entities;
 
+import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.annotation.ServerTimestamp;
+import com.google.type.DateTime;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,13 +12,12 @@ import java.util.stream.Collectors;
 
 public class Booking {
     private UUID id;
-    private LocalDateTime time;
+    private @ServerTimestamp Timestamp time;
     private List<Ticket> tickets;
     private String customer;
 
-    public Booking(UUID id, LocalDateTime time, List<Ticket> tickets, String customer) {
+    public Booking(UUID id, List<Ticket> tickets, String customer) {
         this.id = id;
-        this.time = time;
         this.tickets = tickets;
         this.customer = customer;
     }
@@ -23,7 +26,7 @@ public class Booking {
         return this.id;
     }
 
-    public LocalDateTime getTime() {
+    public Timestamp getTime() {
         return this.time;
     }
 
