@@ -47,7 +47,6 @@ public class FlightController {
 
     @GetMapping("getSeat")
     public Seat getSeat(String airline, String flightId, String seatId){
-        Seat zitje = webService.getSeat(airline, flightId, seatId);
         return webService.getSeat(airline, flightId, seatId);
     }
 }
