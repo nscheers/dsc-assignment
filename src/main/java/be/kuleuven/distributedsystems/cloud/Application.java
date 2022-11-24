@@ -1,11 +1,16 @@
 package be.kuleuven.distributedsystems.cloud;
 
+import com.google.api.core.ApiFunction;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
+import com.google.auth.Credentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
+import com.google.cloud.firestore.v1.FirestoreClient;
+import com.google.cloud.firestore.v1.FirestoreSettings;
 import com.google.cloud.pubsub.v1.Publisher;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.http.client.CredentialsProvider;
@@ -19,9 +24,12 @@ import org.springframework.hateoas.config.HypermediaWebClientConfigurer;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
+import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -52,18 +60,27 @@ public class Application {
     }
 
      */
-    /*
-    @Bean
-    public Firestore db(){
-        return FirestoreOptions.getDefaultInstance()
-                .toBuilder()
-                .setProjectId(this.projectId())
-                .build()
-                .getService();
-    }
-    */
-    @Bean
 
+
+
+    @Bean
+    public static Firestore getFirestore(){
+        return FirestoreOptions.newBuilder()
+                .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
+                        .setEndpoint("localhost:8084")
+                        .setChannelConfigurator(
+                                new ApiFunction<ManagedChannelBuilder, ManagedChannelBuilder>() {
+                                    @Override
+                                    public ManagedChannelBuilder apply(ManagedChannelBuilder input) {
+                                        return input.usePlaintext();
+                                    }
+                                })
+                        .build())
+                .setCredentials(new FirestoreOptions.EmulatorCredentials())
+                .build().getService();
+    }
+
+    @Bean
     public boolean isProduction() {
         return Objects.equals(System.getenv("GAE_ENV"), "standard");
     }
