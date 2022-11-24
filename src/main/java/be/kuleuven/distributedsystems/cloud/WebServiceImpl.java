@@ -118,7 +118,7 @@ public class WebServiceImpl implements WebService{
         return webClientBuilder.baseUrl("https://" + airline).build()
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flights/"  + flightId + "/seats/" + seatId + "/ticket")
+                        .path("/flights/"  + flightId + "/seats/" + seatId)
                         .queryParam("key", key)
                         .build())
                 .retrieve()
