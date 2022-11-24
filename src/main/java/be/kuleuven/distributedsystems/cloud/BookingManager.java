@@ -23,11 +23,7 @@ public class BookingManager {
     public Booking createBooking(Quote[] quotes){
         UUID uuid = UUID.randomUUID();
         List<Ticket> tickets = new ArrayList<>();
-        for (Quote quote: quotes) {
-            tickets.add(new Ticket(quote.getAirline(), quote.getFlightId(), quote.getSeatId(), UUID.randomUUID(), "test", uuid.toString()));
-        }
         Booking booking = new Booking(uuid, LocalDateTime.now(), tickets,"test");
-        addBooking(booking);
         return booking;
     }
     public List<User> getCustomers() {

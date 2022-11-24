@@ -125,7 +125,7 @@ public class WebServiceImpl implements WebService{
                 .bodyToMono(Seat.class).log().retry(3).block();
     }
 
-    public Mono<Ticket> putSeat(String airline , String flightId, String seatId, String user, String bookingReference){
+    public Ticket putSeat(String airline , String flightId, String seatId, String user, String bookingReference){
         return webClientBuilder.baseUrl("https://" + airline).build()
                 .put()
                 .uri(uriBuilder -> uriBuilder
@@ -134,6 +134,17 @@ public class WebServiceImpl implements WebService{
                         .queryParam("bookingReference", bookingReference)
                         .queryParam("key", key)
                         .build())
-                .retrieve().bodyToMono(Ticket.class).retry(3);
+                .retrieve().bodyToMono(Ticket.class).retry(3).block();
+    }
+
+    @Override
+    public void cancelTicket(String airline, String flightId, String seatId, String ticketId) {
+        webClientBuilder.baseUrl("https://" + airline).build()
+                .delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/flights/"  + flightId + "/seats/" + seatId + "/ticket/" + ticketId)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve().bodyToMono(Ticket.class).retry(3).block();
     }
 }

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.awt.print.Book;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +46,8 @@ public class BookingController {
     @PreAuthorize("hasAuthority('manager')")
     public Booking[] getAllBookings(){
         //Todo: Firestore logica
-        return (Booking[]) bookingManager.getBookings().toArray(new Booking[0]);
+        List<Booking> bookings = bookingManager.getBookings();
+        return bookings.toArray(Booking[]::new);
     }
 
     @GetMapping("getBestCustomers")
@@ -60,10 +63,20 @@ public class BookingController {
     public void confirmQuotes(@RequestBody Quote[] quotes){
         //ToDo: Get user from request
         //Todo: Firestore logica
-
-        String bookingReference = bookingManager.createBooking(quotes).getId().toString();
-        for (Quote quote: quotes) {
-            webService.putSeat(quote.getAirline(), quote.getFlightId().toString(), quote.getSeatId().toString(), "test", bookingReference);
+        Booking booking = bookingManager.createBooking(quotes);
+        String bookingReference = booking.getId().toString();
+        List<Ticket> confirmedTickets = new ArrayList<>();
+        try{
+            for (Quote quote: quotes) {
+                Ticket ticket = webService.putSeat(quote.getAirline(), quote.getFlightId().toString(), quote.getSeatId().toString(), "test", bookingReference);
+                confirmedTickets.add(ticket);
+            }
+            booking.setTickets(confirmedTickets);
+            bookingManager.addBooking(booking);
+        }catch(Exception e){
+            for(Ticket ticketToCancel: confirmedTickets){
+                webService.cancelTicket(ticketToCancel.getAirline(), ticketToCancel.getFlightId().toString(), ticketToCancel.getSeatId().toString(), ticketToCancel.getTicketId().toString());
+            }
         }
     }
 }
