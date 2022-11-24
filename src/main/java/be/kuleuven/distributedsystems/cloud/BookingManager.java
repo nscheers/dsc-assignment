@@ -4,8 +4,14 @@ import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Quote;
 import be.kuleuven.distributedsystems.cloud.entities.Ticket;
 import be.kuleuven.distributedsystems.cloud.entities.User;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.v1.FirestoreClient;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.print.Book;
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +22,23 @@ public class BookingManager {
     List<Booking> bookings;
 
 
-    public BookingManager() {
+    @Autowired
+    private Firestore getFirestore;
+
+
+
+    /*
+    @PostConstruct
+    void constructor(){
+        this.db.collection("tickets").get();
+    }
+
+     */
+
+
+
+
+    public BookingManager()  {
         this.customers = new ArrayList<User>();
         this.bookings = new ArrayList<Booking>();
     }
@@ -43,7 +65,17 @@ public class BookingManager {
     }
 
     public List<Booking> getBookings() {
-        return bookings;
+        List<Booking> bookingList = new ArrayList<>();
+        try {
+            List<QueryDocumentSnapshot> documents = getFirestore.collection("bookings").get().get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                bookingList.add(document.toObject(Booking.class));
+            }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return  bookingList;
     }
 
     public void setBookings(List<Booking> bookings) {
@@ -51,6 +83,7 @@ public class BookingManager {
     }
 
     public void addBooking(Booking booking){
+        getFirestore.collection("bookings").add(booking);
         this.bookings.add(booking);
     }
 }
