@@ -25,6 +25,8 @@ public class WebServiceImpl implements WebService{
     private static final ObjectMapper mapper = new ObjectMapper();
     private final static String key = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
+    private PubSub pubSub;
+
     List<WebClient> airlines;
 
     public WebServiceImpl(WebClient.Builder webClientBuilder){
@@ -32,14 +34,15 @@ public class WebServiceImpl implements WebService{
         airlines = new ArrayList<WebClient>();
         airlines.add(this.webClientBuilder.baseUrl("https://reliable-airline.com").build());
         airlines.add(this.webClientBuilder.baseUrl("https://unreliable-airline.com").build());
+        pubSub = new PubSub();
 
     }
 
 
     public Flight[] getFlights() {
         Flight[] allFlights = new Flight[0];
-//Uncomment de lijn hieronder om alles te breken
-        // PubSub.publishMessage("getFlights");
+
+        pubSub.publishMessage("getFlights");
 
         Iterator itr = airlines.iterator();
         while (itr.hasNext())

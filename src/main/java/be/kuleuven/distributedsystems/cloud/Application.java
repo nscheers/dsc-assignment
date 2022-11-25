@@ -30,6 +30,7 @@ import org.springframework.hateoas.config.HypermediaWebClientConfigurer;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -53,46 +54,6 @@ public class Application {
         // TODO: (level 2) load this data into Firestore
         String data = new String(new ClassPathResource("data.json").getInputStream().readAllBytes());
     }
-
-
-
-
-    @Bean
-    public Publisher publisher() throws IOException{
-
-        TopicName topicName =
-                TopicName.of("demo-distributed-systems-kul", "airlines");
-
-        return Publisher.newBuilder(topicName)
-                .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
-                        .setEndpoint("localhost:8083")
-                        .setChannelConfigurator(
-                                ManagedChannelBuilder::usePlaintext)
-                        .build())
-                .setCredentialsProvider( NoCredentialsProvider.create())
-                .build();
-    }
-
-    @Bean
-    public Subscriber subscriber() throws TimeoutException{
-
-        ProjectSubscriptionName subscriptionName =
-                ProjectSubscriptionName.of("demo-distributed-systems-kul", "sub");
-
-        MessageReceiver receiver =
-                (PubsubMessage message, AckReplyConsumer consumer) -> {
-                    // Handle incoming message, then ack the received message.
-                    System.out.println("Id: " + message.getMessageId());
-                    System.out.println("Data: " + message.getData().toStringUtf8());
-                    consumer.ack();
-                };
-
-        return Subscriber.newBuilder(subscriptionName, receiver).build();
-
-    }
-
-
-
 
 
     @Bean

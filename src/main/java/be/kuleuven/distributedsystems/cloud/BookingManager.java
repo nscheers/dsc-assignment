@@ -39,7 +39,7 @@ public class BookingManager {
 
     @PostConstruct
     void constructor(){
-       PubSub.subscribeAsync();
+
     }
 
 
