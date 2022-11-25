@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class WebServiceImpl implements WebService{
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private final static String key = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
@@ -38,6 +38,8 @@ public class WebServiceImpl implements WebService{
 
     public Flight[] getFlights() {
         Flight[] allFlights = new Flight[0];
+//Uncomment de lijn hieronder om alles te breken
+        // PubSub.publishMessage("getFlights");
 
         Iterator itr = airlines.iterator();
         while (itr.hasNext())
@@ -73,7 +75,7 @@ public class WebServiceImpl implements WebService{
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(Flight.class).log().retry(3);;
+                .bodyToMono(Flight.class).log().retry(3);
         return response.block();
     }
 
@@ -107,8 +109,7 @@ public class WebServiceImpl implements WebService{
                 .retry(3)
                 .block()
                 .getContent();
-        Seat[] zitjes = seats.toArray(new Seat[seats.size()]);
-        // String[] types = Arrays.stream(zitjes).map(Seat::getType).distinct().toArray(String[]::new);
+        Seat[] zitjes = seats.toArray(new Seat[0]);
 
         return Arrays.stream(zitjes).sorted(Comparator.comparing(Seat::getName)).collect(groupingBy(Seat::getType));
 
@@ -147,4 +148,7 @@ public class WebServiceImpl implements WebService{
                         .build())
                 .retrieve().bodyToMono(Ticket.class).retry(3).block();
     }
+
+
+
 }

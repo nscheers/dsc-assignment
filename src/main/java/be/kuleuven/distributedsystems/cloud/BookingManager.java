@@ -18,6 +18,7 @@ import com.google.cloud.firestore.v1.FirestoreClient;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.Instant;
@@ -31,17 +32,17 @@ public class BookingManager {
 
 
 
-    private Firestore getFirestore;
+    private final Firestore getFirestore;
 
 
 
-    /*
+
     @PostConstruct
     void constructor(){
-        this.db.collection("tickets").get();
+       PubSub.subscribeAsync();
     }
 
-     */
+
 
 
 

@@ -11,7 +11,13 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.v1.FirestoreClient;
 import com.google.cloud.firestore.v1.FirestoreSettings;
+import com.google.cloud.pubsub.v1.AckReplyConsumer;
+import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.PubsubMessage;
+import com.google.pubsub.v1.TopicName;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.http.client.CredentialsProvider;
 import org.springframework.boot.SpringApplication;
@@ -32,6 +38,7 @@ import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeoutException;
 
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 @SpringBootApplication
@@ -46,20 +53,43 @@ public class Application {
         // TODO: (level 2) load this data into Firestore
         String data = new String(new ClassPathResource("data.json").getInputStream().readAllBytes());
     }
-    /*
+
+
+
+
     @Bean
     public Publisher publisher() throws IOException{
-        TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(
-                GrpcTransportChannel.create(
-                        ManagedChannelBuilder.forTarget("localhost:8083").usePlaintext().build()));
-        CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
-        return Publisher.newBuilder()
-                .setChannelProvider(channelProvider)
-                .setChannelProvider(credentialsProvider)
+
+        TopicName topicName =
+                TopicName.of("demo-distributed-systems-kul", "airlines");
+
+        return Publisher.newBuilder(topicName)
+                .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
+                        .setEndpoint("localhost:8083")
+                        .setChannelConfigurator(
+                                ManagedChannelBuilder::usePlaintext)
+                        .build())
+                .setCredentialsProvider( NoCredentialsProvider.create())
                 .build();
     }
 
-     */
+    @Bean
+    public Subscriber subscriber() throws TimeoutException{
+
+        ProjectSubscriptionName subscriptionName =
+                ProjectSubscriptionName.of("demo-distributed-systems-kul", "sub");
+
+        MessageReceiver receiver =
+                (PubsubMessage message, AckReplyConsumer consumer) -> {
+                    // Handle incoming message, then ack the received message.
+                    System.out.println("Id: " + message.getMessageId());
+                    System.out.println("Data: " + message.getData().toStringUtf8());
+                    consumer.ack();
+                };
+
+        return Subscriber.newBuilder(subscriptionName, receiver).build();
+
+    }
 
 
 

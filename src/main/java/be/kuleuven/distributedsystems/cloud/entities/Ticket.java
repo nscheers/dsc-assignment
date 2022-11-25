@@ -50,10 +50,9 @@ public class Ticket {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Ticket)) {
+        if (!(o instanceof Ticket other)) {
             return false;
         }
-        var other = (Ticket) o;
         return this.ticketId.equals(other.ticketId)
                 && this.seatId.equals(other.seatId)
                 && this.flightId.equals(other.flightId)

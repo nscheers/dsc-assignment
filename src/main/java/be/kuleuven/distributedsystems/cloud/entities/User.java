@@ -2,8 +2,8 @@ package be.kuleuven.distributedsystems.cloud.entities;
 
 public class User {
 
-    private String email;
-    private String role;
+    private final String email;
+    private final String role;
 
     public User(String email, String role) {
         this.email = email;
