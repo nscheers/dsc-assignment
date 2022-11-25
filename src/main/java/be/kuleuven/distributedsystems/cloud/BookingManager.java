@@ -1,5 +1,7 @@
 package be.kuleuven.distributedsystems.cloud;
 
+import be.kuleuven.distributedsystems.cloud.auth.SecurityFilter;
+import be.kuleuven.distributedsystems.cloud.auth.WebSecurityConfig;
 import be.kuleuven.distributedsystems.cloud.entities.Booking;
 import be.kuleuven.distributedsystems.cloud.entities.Quote;
 import be.kuleuven.distributedsystems.cloud.entities.Ticket;
@@ -60,13 +62,18 @@ public class BookingManager {
 
     }
     public Booking createBooking(Quote[] quotes){
-
-
         String bookingId = UUID.randomUUID().toString();
-        List<Ticket> tickets = new ArrayList<>();
-        tickets.addAll(Arrays.stream(quotes).map(q -> new Ticket(q.getAirline(), q.getFlightId(), q.getSeatId(), UUID.randomUUID().toString(), "test", bookingId)).toList());
-        Booking booking = new Booking(bookingId, tickets, Date.from(Instant.now()), "test");
-        addBooking(booking);
+
+        List<Ticket> tickets = new ArrayList<>(Arrays.stream(quotes)
+                .map(q ->
+                        new Ticket(q.getAirline(), q.getFlightId(),
+                                q.getSeatId(), UUID.randomUUID().toString(),
+                                WebSecurityConfig.getUser().getEmail(),
+                                bookingId)).toList());
+
+        Booking booking =
+                new Booking(bookingId, tickets, Date.from(Instant.now()),
+                        WebSecurityConfig.getUser().getEmail());
         return booking;
     }
     public List<User> getCustomers() {
@@ -84,6 +91,29 @@ public class BookingManager {
     public List<Booking> getBookings() {
         List<Booking> bookingList = new ArrayList<>();
 
+        try {
+            List<QueryDocumentSnapshot> documents =
+                    getFirestore.collection("bookings")
+                    .whereEqualTo("customer",
+                            WebSecurityConfig.getUser().getEmail())
+                            .get().get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+                try {
+                    bookingList.add(document.toObject(Booking.class));
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
+        catch (Exception ie){
+            System.out.println(ie);
+        }
+
+        return  bookingList;
+    }
+
+    public List<Booking> getAllBookings() {
+        List<Booking> bookingList = new ArrayList<>();
         try {
             List<QueryDocumentSnapshot> documents = getFirestore.collection("bookings").get().get().getDocuments();
             for (DocumentSnapshot document : documents) {

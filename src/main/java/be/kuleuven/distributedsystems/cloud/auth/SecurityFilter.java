@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.net.HttpHeaders;
+import net.minidev.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,9 +36,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String[] chunks = authorization.split(" ");
         DecodedJWT jwt =  JWT.decode(chunks[1]);
 
-        var role = jwt.getClaim("role");
 
-        var user = new User("test@example.com", role.toString());
+        var user = new User(jwt.getClaim("email").asString(), jwt.getClaim("role").asString());
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(new FirebaseAuthentication(user));
@@ -51,7 +51,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         return !path.startsWith("/api");
     }
 
-    private static class FirebaseAuthentication implements Authentication {
+    public static class FirebaseAuthentication implements Authentication {
         private final User user;
 
         FirebaseAuthentication(User user) {

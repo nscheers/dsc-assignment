@@ -2,6 +2,7 @@ package be.kuleuven.distributedsystems.cloud.controller;
 
 import be.kuleuven.distributedsystems.cloud.BookingManager;
 import be.kuleuven.distributedsystems.cloud.WebService;
+import be.kuleuven.distributedsystems.cloud.auth.WebSecurityConfig;
 import be.kuleuven.distributedsystems.cloud.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,14 +30,14 @@ public class BookingController {
     @GetMapping("getBookings")
     public Booking[] getBookings(){
         //Todo: Customerke derin
-        List<Booking> bookings = bookingManager.getBookings().stream().filter(booking -> booking.getCustomer().equals("test")).toList();
+        List<Booking> bookings = bookingManager.getBookings();
         return bookings.toArray(Booking[]::new);
     }
 
     @GetMapping("getAllBookings")
     @PreAuthorize("hasAuthority('manager')")
     public Booking[] getAllBookings(){
-        List<Booking> bookings = bookingManager.getBookings();
+        List<Booking> bookings = bookingManager.getAllBookings();
         return bookings.toArray(Booking[]::new);
     }
 
@@ -57,7 +58,9 @@ public class BookingController {
         List<Ticket> confirmedTickets = new ArrayList<>();
         try{
             for (Quote quote: quotes) {
-                Ticket ticket = webService.putSeat(quote.getAirline(), quote.getFlightId(), quote.getSeatId(), "test", bookingReference);
+                Ticket ticket = webService.putSeat(quote.getAirline(),
+                        quote.getFlightId(), quote.getSeatId(),
+                        WebSecurityConfig.getUser().getEmail() , booking.getId());
                 confirmedTickets.add(ticket);
             }
             booking.setTickets(confirmedTickets);
