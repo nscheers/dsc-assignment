@@ -12,8 +12,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.awt.print.Book;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -29,7 +29,6 @@ public class BookingController {
 
     @GetMapping("getBookings")
     public Booking[] getBookings(){
-        //Todo: Customerke derin
         List<Booking> bookings = bookingManager.getBookings();
         return bookings.toArray(Booking[]::new);
     }
@@ -43,18 +42,16 @@ public class BookingController {
 
     @GetMapping("getBestCustomers")
     @PreAuthorize("hasAuthority('manager')")
-    public Flight[] getBestCustomers(){
-        //Todo: Firestore logica
-
-        bookingManager.getBookings().stream();
-        return null;
+    public String[] getBestCustomers(){
+        List<Booking> bookings = bookingManager.getBookings();
+        Booking maxBooking = bookings.stream().max(Comparator.comparing(booking -> booking.getTickets().size())).orElseThrow(NoSuchElementException::new);
+        Stream<Booking> maxBookings = bookings.stream().filter(booking -> booking.getTickets().size() == maxBooking.getTickets().size());
+        return maxBookings.map(Booking::getCustomer).distinct().toArray(String[]::new);
     }
 
     @PostMapping("confirmQuotes")
     public void confirmQuotes(@RequestBody Quote[] quotes){
-        //ToDo: Get user from request
         Booking booking = bookingManager.createBooking(quotes);
-        String bookingReference = booking.getId();
         List<Ticket> confirmedTickets = new ArrayList<>();
         try{
             for (Quote quote: quotes) {
@@ -66,7 +63,6 @@ public class BookingController {
             booking.setTickets(confirmedTickets);
             bookingManager.addBooking(booking);
         }catch(Exception e){
-            System.out.println(e);
             for(Ticket ticketToCancel: confirmedTickets){
                 webService.cancelTicket(ticketToCancel.getAirline(), ticketToCancel.getFlightId(), ticketToCancel.getSeatId(), ticketToCancel.getTicketId());
             }
