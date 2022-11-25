@@ -11,6 +11,7 @@ import com.google.cloud.pubsub.v1.*;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.PubsubMessage;
+import com.google.pubsub.v1.PushConfig;
 import com.google.pubsub.v1.TopicName;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -53,10 +54,22 @@ public class PubSub {
                     .setCredentialsProvider(credentialsProvider)
                     .build());
 
+            SubscriptionAdminClient subscriptionClient =
+                    SubscriptionAdminClient.create(SubscriptionAdminSettings.newBuilder()
+                            .setTransportChannelProvider(channelProvider)
+                            .setCredentialsProvider(credentialsProvider)
+                            .build());
+
+
             TopicName topicName =
                     TopicName.of("demo-distributed-systems-kul", "airlines");
             ProjectSubscriptionName subscriptionName =
                     ProjectSubscriptionName.of("demo-distributed-systems-kul", "subAirlines");
+            topicClient.createTopic(topicName);
+            subscriptionClient.createSubscription(subscriptionName, topicName,
+                    PushConfig.newBuilder().build(), 0);
+
+
 
 
             publisher = Publisher.newBuilder(topicName)
