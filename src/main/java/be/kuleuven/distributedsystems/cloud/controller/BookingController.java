@@ -36,6 +36,8 @@ public class BookingController {
     @GetMapping("getAllBookings")
     @PreAuthorize("hasAuthority('manager')")
     public Booking[] getAllBookings(){
+        if(!WebSecurityConfig.getUser().isManager()) return null;
+
         List<Booking> bookings = bookingManager.getAllBookings();
         return bookings.toArray(Booking[]::new);
     }
@@ -43,7 +45,9 @@ public class BookingController {
     @GetMapping("getBestCustomers")
     @PreAuthorize("hasAuthority('manager')")
     public String[] getBestCustomers(){
-        List<Booking> bookings = bookingManager.getBookings();
+        if(!WebSecurityConfig.getUser().isManager()) return null;
+
+        List<Booking> bookings = bookingManager.getAllBookings();
         Booking maxBooking = bookings.stream().max(Comparator.comparing(booking -> booking.getTickets().size())).orElseThrow(NoSuchElementException::new);
         Stream<Booking> maxBookings = bookings.stream().filter(booking -> booking.getTickets().size() == maxBooking.getTickets().size());
         return maxBookings.map(Booking::getCustomer).distinct().toArray(String[]::new);
