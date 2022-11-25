@@ -21,9 +21,9 @@ import java.util.List;
 public class BookingController {
     @Autowired
     private WebService webService;
-    private BookingManager bookingManager = new BookingManager();
+    private final BookingManager bookingManager = new BookingManager();
 
-    private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
+    private static final String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
 
 

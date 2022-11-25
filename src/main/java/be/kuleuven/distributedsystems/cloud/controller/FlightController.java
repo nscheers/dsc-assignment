@@ -23,7 +23,7 @@ public class FlightController {
     @Autowired
     private WebService webService;
 
-    private static String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
+    private static final String apiKey = "Iw8zeveVyaPNWonPNaU0213uw3g6Ei";
 
     @GetMapping("getFlights")
     public Flight[] getFlights(){

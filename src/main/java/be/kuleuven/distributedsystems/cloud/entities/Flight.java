@@ -44,10 +44,9 @@ public class Flight {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Flight)) {
+        if (!(o instanceof Flight other)) {
             return false;
         }
-        var other = (Flight) o;
         return this.airline.equals(other.airline)
                 && this.flightId.equals(other.flightId);
     }

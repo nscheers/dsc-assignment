@@ -30,8 +30,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // TODO: (level 1) decode Identity Token and assign correct email and role
-        // TODO: (level 2) verify Identity Token
+
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         String[] chunks = authorization.split(" ");
         DecodedJWT jwt =  JWT.decode(chunks[1]);
