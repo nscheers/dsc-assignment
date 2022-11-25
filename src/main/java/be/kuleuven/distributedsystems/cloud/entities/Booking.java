@@ -1,32 +1,31 @@
 package be.kuleuven.distributedsystems.cloud.entities;
 
 import com.google.cloud.Timestamp;
-import com.google.cloud.firestore.annotation.ServerTimestamp;
 import com.google.type.DateTime;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Booking {
-    private UUID id;
-    private @ServerTimestamp Timestamp time;
+    private String id;
+    private Date time;
     private List<Ticket> tickets;
     private String customer;
 
-    public Booking(UUID id, List<Ticket> tickets, String customer) {
+    public Booking(String id, List<Ticket> tickets, Date time, String customer) {
         this.id = id;
         this.tickets = tickets;
+        this.time = time;
         this.customer = customer;
     }
 
-    public UUID getId() {
+    public Booking(){}
+
+    public String getId() {
         return this.id;
     }
 
-    public Timestamp getTime() {
+    public Date getTime() {
         return this.time;
     }
 

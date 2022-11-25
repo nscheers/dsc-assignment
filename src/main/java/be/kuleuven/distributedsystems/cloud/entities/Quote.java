@@ -6,13 +6,13 @@ import java.util.UUID;
 public class Quote {
 
     private String airline;
-    private UUID flightId;
-    private UUID seatId;
+    private String flightId;
+    private String seatId;
 
     public Quote() {
     }
 
-    public Quote(String airline, UUID flightId, UUID seatId) {
+    public Quote(String airline, String flightId, String seatId) {
         this.airline = airline;
         this.flightId = flightId;
         this.seatId = seatId;
@@ -26,19 +26,19 @@ public class Quote {
         this.airline = airline;
     }
 
-    public UUID getFlightId() {
+    public String getFlightId() {
         return flightId;
     }
 
-    public void setFlightId(UUID flightId) {
+    public void setFlightId(String flightId) {
         this.flightId = flightId;
     }
 
-    public UUID getSeatId() {
+    public String getSeatId() {
         return this.seatId;
     }
 
-    public void setSeatId(UUID seatId) {
+    public void setSeatId(String seatId) {
         this.seatId = seatId;
     }
 

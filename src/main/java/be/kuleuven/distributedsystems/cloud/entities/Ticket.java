@@ -6,16 +6,16 @@ import java.util.UUID;
 
 public class Ticket {
     private String airline;
-    private UUID flightId;
-    private UUID seatId;
-    private UUID ticketId;
+    private String flightId;
+    private String seatId;
+    private String ticketId;
     private String customer;
     private String bookingReference;
 
     public Ticket() {
     }
 
-    public Ticket(String airline, UUID flightId, UUID seatId, UUID ticketId, String customer, String bookingReference) {
+    public Ticket(String airline, String flightId, String seatId, String ticketId, String customer, String bookingReference) {
         this.airline = airline;
         this.flightId = flightId;
         this.seatId = seatId;
@@ -28,15 +28,15 @@ public class Ticket {
         return airline;
     }
 
-    public UUID getFlightId() {
+    public String getFlightId() {
         return flightId;
     }
 
-    public UUID getSeatId() {
+    public String getSeatId() {
         return this.seatId;
     }
 
-    public UUID getTicketId() {
+    public String getTicketId() {
         return this.ticketId;
     }
 

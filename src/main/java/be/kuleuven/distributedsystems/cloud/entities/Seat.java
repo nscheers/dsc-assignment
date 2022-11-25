@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class Seat {
     private String airline;
-    private UUID flightId;
-    private UUID seatId;
+    private String flightId;
+    private String seatId;
     private LocalDateTime time;
     private String type;
     private String name;
@@ -21,7 +21,7 @@ public class Seat {
     public Seat() {
     }
 
-    public Seat(String airline, UUID flightId, UUID seatId, LocalDateTime time, String type, String name, double price) {
+    public Seat(String airline, String flightId, String seatId, LocalDateTime time, String type, String name, double price) {
         this.airline = airline;
         this.flightId = flightId;
         this.seatId = seatId;
@@ -35,11 +35,11 @@ public class Seat {
         return airline;
     }
 
-    public UUID getFlightId() {
+    public String getFlightId() {
         return flightId;
     }
 
-    public UUID getSeatId() {
+    public String getSeatId() {
         return this.seatId;
     }
 
